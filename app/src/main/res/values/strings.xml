@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Azizi ODK Pull</string>
+    <string name="p_heading_form">Form</string>
+    <string name="p_heading_pulling">Pulling</string>
+    <string name="p_heading_house_cleaning">House Cleaning</string>
+
+    <string name="select_a_form">Select a form</string>
+    <string name="select_form_summery">Select a form you what to pull</string>
+
+    <string name="pull_frequency">Pull frequency</string>
+    <string name="pull_frequency_summery">How often do you want to pull this form</string>
+
+    <string-array name="pull_frequency_entries">
+        <item name="0">Don\'t pull at all</item>
+        <item name="1">Every 5 Minutes</item>
+        <item name="2">Every 15 Minutes</item>
+        <item name="3">Every 30 Minutes</item>
+        <item name="4">Every 1 Hour</item>
+        <item name="5">Every 24 Hours</item>
+    </string-array>
+
+    <string-array name="pull_frequency_values">
+        <item name="0">dnt</item>
+        <item name="1">5_min</item>
+        <item name="2">15_min</item>
+        <item name="3">30_min</item>
+        <item name="4">1_hr</item>
+        <item name="5">24_hr</item>
+    </string-array>
+
+    <string name="pull_when_internet_avail">Pull whenever internet connection becomes available</string>
+
+    <string name="pull_when_odk_launches">Pull whenever ODK Collect launches</string>
+    <string name="pull_now">Pull now</string>
+    <string name="pull_status">Pull status</string>
+    <string name="pulling">Pulling</string>
+    <string name="last_pulled_on_">Last pulled on:</string>
+    <string name="never_pulled">Never pulled</string>
+
+    <string name="delete_local_data">Delete local data</string>
+
+    <string name="fetching_forms_please_wait_">Fetching forms, please wait..</string>
+    <string name="loading_please_wait_">Loading, please wait..</string>
+    <string name="fetching_csv">Fetching external form data</string>
+    <string name="successful_saved_csv">Successfully saved external data</string>
+    <string name="unable_save_csv">Unable to save external data</string>
+    <string name="fetching_csv_for_">Fetching external form data for</string>
+    <string name="determining_data_for_pulling">Determining which data sets to pull</string>
+    <string name="warning">Warning</string>
+    <string name="delete_external_data_warning_">Clicking \'Okay\' will delete pull preferences and external data for </string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="deleted_external_data_for_form">External data for form deleted</string>
+</resources>

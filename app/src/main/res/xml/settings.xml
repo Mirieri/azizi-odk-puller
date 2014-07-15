@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="category_form"
+        android:title="@string/p_heading_form" >
+        <ListPreference
+            android:key="pref_form"
+            android:title="@string/select_a_form"
+            android:summary="@string/select_form_summery"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_pulling"
+        android:title="@string/p_heading_pulling" >
+
+        <ListPreference
+            android:key="pref_pull_frequency"
+            android:entries="@array/pull_frequency_entries"
+            android:entryValues="@array/pull_frequency_values"
+            android:summary="@string/pull_frequency_summery"
+            android:title="@string/pull_frequency" />
+
+        <CheckBoxPreference
+            android:key="pref_pull_internet_on"
+            android:title="@string/pull_when_internet_avail">
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:key="pref_pull_odk_launches"
+            android:title="@string/pull_when_odk_launches">
+        </CheckBoxPreference>
+
+        <Preference
+            android:key="pref_pull_now"
+            android:title="@string/pull_now">
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_house_cleaning"
+        android:title="@string/p_heading_house_cleaning" >
+        <Preference
+            android:key="pref_delete_data"
+            android:title="@string/delete_local_data">
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

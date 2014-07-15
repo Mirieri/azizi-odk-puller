@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.cgiar.ilri.odk.pull" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="org.cgiar.ilri.odk.pull.SettingsActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <service
+            android:name="org.cgiar.ilri.odk.pull.backend.services.FetchFormCSVService"
+            android:enabled="true">
+        </service>
+        <service
+            android:name="org.cgiar.ilri.odk.pull.backend.services.PersistentService"
+            android:enabled="true">
+        </service>
+        <service
+            android:name="org.cgiar.ilri.odk.pull.backend.services.NetworkOnService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="org.cgiar.ilri.odk.pull.backend.services.DeleteFormDataService"
+            android:enabled="true">
+        </service>
+    </application>
+
+</manifest>
