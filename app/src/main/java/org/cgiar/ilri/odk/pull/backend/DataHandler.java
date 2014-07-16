@@ -263,9 +263,14 @@ public class DataHandler {
 
     public static void updateFormLastUpdateTime(Context context, String formName){
         Form form = getForm(context, formName);
-        form.setLastPull(new Date().getTime());
+        if(form != null){
+            form.setLastPull(new Date().getTime());
 
-        saveFormPreferences(context, form);
+            saveFormPreferences(context, form);
+        }
+        else{
+            Log.w(TAG, "Fetched form was null. might mean that the user is 'force' pulling a form that is not saved in the SQLite database");
+        }
     }
 
     public static List<Form> getAllForms(Context context){
