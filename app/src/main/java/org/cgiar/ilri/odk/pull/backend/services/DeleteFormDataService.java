@@ -8,10 +8,17 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.cgiar.ilri.odk.pull.R;
 import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Jason Rogena j.rogena@cgiar.org on 11/07/14.
@@ -39,35 +46,58 @@ public class DeleteFormDataService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String formName = intent.getStringExtra(KEY_FORM_NAME);
-
         if(formName != null){
+            List<String> pulledFiles = new ArrayList<String>();
+            //get list of ODK Pull files for this form from the server
+            try {
+                String jsonString = DataHandler.sendDataToServer(this, null, DataHandler.URI_FETCH_FORM_FILE_NAMES + URLEncoder.encode(formName, "UTF-8"));
+                JSONArray fileNames = new JSONObject(jsonString).getJSONArray("files");
+                for(int index = 0; index < fileNames.length(); index++) {
+                    if(fileNames.getString(index).equals(Form.DEFAULT_CSV_FILE_NAME)){
+                        pulledFiles.add(fileNames.getString(index)+Form.SUFFIX_CSV);
+                    }
+                    else {
+                        pulledFiles.add(fileNames.getString(index)+Form.SUFFIX_CSV);
+                        pulledFiles.add(fileNames.getString(index)+Form.SUFFIX_CSV+Form.SUFFIX_IMPORTED);
+                        pulledFiles.add(fileNames.getString(index)+Form.SUFFIX_DB);
+                        pulledFiles.add(fileNames.getString(index)+Form.SUFFIX_DB+Form.SUFFIX_JOURNAL);
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //delete files that might have been pulled using the normal way
             File formDir = new File(Form.BASE_ODK_LOCATION + formName + Form.EXTERNAL_ITEM_SET_SUFFIX);
             if(formDir.exists() && formDir.exists()){
-                File csvFile = new File(Form.BASE_ODK_LOCATION + formName + Form.EXTERNAL_ITEM_SET_SUFFIX+"/"+Form.CSV_FILE_NAME);
-                if(csvFile.exists()){
-                    csvFile.delete();
-                    Log.i(TAG, "Deleted " + csvFile.getPath());
+                for(int index = 0; index < pulledFiles.size(); index++){
+                    File file = new File(Form.BASE_ODK_LOCATION + formName + Form.EXTERNAL_ITEM_SET_SUFFIX+File.separator+pulledFiles.get(index));
+                    if(file.exists()){
+                        file.delete();
+                        Log.i(TAG, "Deleted " + file.getPath());
+                    }
+                    else{
+                        Log.w(TAG, file.getPath() + " does not exist. Not deleting anything");
+                    }
                 }
-                else{
-                    Log.w(TAG, csvFile.getPath() + " does not exist. Not deleting anything");
-                }
-
             }
             else{
                 Log.w(TAG, formDir.getPath() + " does not exist. Not deleting anything");
             }
-
+            //delete files that might have been pushed using adb
             File adbFormDir = new File(Form.BASE_ODK_LOCATION + formName.replaceAll("[^A-Za-z0-9]", "_") + Form.EXTERNAL_ITEM_SET_SUFFIX);
             if(adbFormDir.exists() && adbFormDir.exists()){
-                File csvFile = new File(Form.BASE_ODK_LOCATION + formName.replaceAll("[^A-Za-z0-9]", "_") + Form.EXTERNAL_ITEM_SET_SUFFIX+"/"+Form.CSV_FILE_NAME);
-                if(csvFile.exists()){
-                    csvFile.delete();
-                    Log.i(TAG, "Deleted " + csvFile.getPath());
+                for(int index = 0; index < pulledFiles.size(); index++){
+                    File file = new File(Form.BASE_ODK_LOCATION + formName.replaceAll("[^A-Za-z0-9]", "_") + Form.EXTERNAL_ITEM_SET_SUFFIX+File.separator+pulledFiles.get(index));
+                    if(file.exists()){
+                        file.delete();
+                        Log.i(TAG, "Deleted " + file.getPath());
+                    }
+                    else{
+                        Log.w(TAG, file.getPath() + " does not exist. Not deleting anything");
+                    }
                 }
-                else{
-                    Log.w(TAG, csvFile.getPath() + " does not exist. Not deleting anything");
-                }
-
             }
             else{
                 Log.w(TAG, adbFormDir.getPath() + " does not exist. Not deleting anything");

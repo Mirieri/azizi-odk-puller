@@ -3,12 +3,19 @@ package org.cgiar.ilri.odk.pull.backend.services;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.cgiar.ilri.odk.pull.R;
+import org.cgiar.ilri.odk.pull.SettingsActivity;
 import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 
@@ -64,7 +71,9 @@ public class PersistentService extends IntentService {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
-
+        //register all unregistered forms
+        registerNewPullForms();
+        //get all forms that are due for updating
         List<Form> dueForms = getAllDueForms();
 
         for(int index = 0; index < dueForms.size(); index++){
@@ -79,7 +88,7 @@ public class PersistentService extends IntentService {
             e.printStackTrace();
         }
         mNotificationManager.cancel(NOTIFICATION_ID);*/
-        Log.d(TAG,"************************************************");
+        Log.d(TAG, "************************************************");
     }
 
     /**
@@ -132,6 +141,60 @@ public class PersistentService extends IntentService {
         }
 
         return dueForms;
+    }
+
+    /**
+     * This method gets ODK forms that are on the device that have corresponding pull data on the server
+     */
+    private void registerNewPullForms() {
+        List<String> serverForms = DataHandler.getAllFormsOnServer(this);
+        List<Form> registeredForms = DataHandler.getAllForms(this);
+        List<String> allODKFormNames = DataHandler.getAllODKForms();
+        for(int i = 0; i < allODKFormNames.size(); i++){
+            String currFormName = allODKFormNames.get(i);
+            boolean found = false;
+            for(int j = 0; j < registeredForms.size(); j++){
+                if(currFormName.equals(registeredForms.get(j).getName())){
+                    found = true;
+                    break;//no need to continue with loop
+                }
+            }
+            if(found == false) {//current form is not registered with ODK pull
+                //check if current form has pull data on the server
+                for(int j = 0; j < serverForms.size(); j++){
+                    if(currFormName.equals(serverForms.get(j))){
+                        //form has form data on the server but is not registered
+                        Form currUnregisteredForm = new Form(currFormName, Form.PULL_5_MIN, true, true);
+                        currUnregisteredForm.setLastPull(new Date().getTime() - (60000*6));//make form updated last more than 6 mins ago
+                        DataHandler.saveFormPreferences(this, currUnregisteredForm);
+                        updateNotification(currFormName, this.getString(R.string.added_to_odk_pull));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * This method updates/creates the notification for this service.
+     * Note that the notification generated here is a compact notification
+     *
+     * @param title The title for the notification
+     * @param details The details of the notification
+     */
+    private void updateNotification(String title, String details){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText(details)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(details))
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
     /**

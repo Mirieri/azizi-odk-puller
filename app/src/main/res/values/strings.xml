@@ -38,13 +38,14 @@
     <string name="never_pulled">Never pulled</string>
 
     <string name="delete_local_data">Delete local data</string>
+    <string name="added_to_odk_pull">Has been added to ODK Pull. Open the ODK Pull app to modify when and how to update the form\'s data</string>
 
     <string name="fetching_forms_please_wait_">Fetching forms, please wait..</string>
     <string name="loading_please_wait_">Loading, please wait..</string>
-    <string name="fetching_csv">Fetching external form data</string>
+    <string name="fetching_data">Fetching external form data</string>
     <string name="successful_saved_csv">Successfully saved external data</string>
     <string name="unable_save_csv">Unable to save external data</string>
-    <string name="fetching_csv_for_">Fetching external form data for</string>
+    <string name="fetching_data_for_">Fetching external form data for</string>
     <string name="determining_data_for_pulling">Determining which data sets to pull</string>
     <string name="warning">Warning</string>
     <string name="delete_external_data_warning_">Clicking \'Okay\' will delete pull preferences and external data for </string>

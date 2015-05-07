@@ -22,6 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
     public static final String TABLE_FORM = "form";
 
     private static final String TAG = "DatabaseHelper";
+    private boolean externalDb;
 
     /**
      * Constructor for the DatabaseHelper class
@@ -31,6 +32,13 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
     public DatabaseHelper(Context context){
         super(context, DB_NAME, null, DB_VERSION);
         Log.d(TAG, "Database version = "+DB_VERSION);
+        externalDb = false;
+    }
+
+    public DatabaseHelper(Context context, String dbName, int version, String pathToDb){
+        super(new DatabaseContext(context, pathToDb), dbName, null, version);
+        Log.d(TAG, "Database version = "+DB_VERSION);
+        externalDb = true;
     }
 
     /**
@@ -40,8 +48,9 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_FORM + " (id INTEGER PRIMARY KEY, name TEXT, pref_pull_freq TEXT, pref_pull_internet_on INT, pref_pull_odk_launches INT, last_time_fetched TEXT);");
-        //insert any static data to the db now
+        if(externalDb != false){
+            db.execSQL("CREATE TABLE " + TABLE_FORM + " (id INTEGER PRIMARY KEY, name TEXT, pref_pull_freq TEXT, pref_pull_internet_on INT, pref_pull_odk_launches INT, last_time_fetched TEXT);");
+        }
     }
 
     /**
@@ -54,11 +63,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(TAG, "About to update the database. All data will be lost");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FORM);
-
-        //recreate the database
-        onCreate(db);
+        if(externalDb != false){
+            Log.w(TAG, "About to update the database. All data will be lost");
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_FORM);
+            //recreate the database
+            onCreate(db);
+        }
     }
 
     /**
@@ -132,7 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
      * @param uniqueColumnIndex Index of the unique key (primary key). Set this to -1 if none
      * @param db    The writable database
      */
-    public void runInsertQuery(String table,String[] columns,String[] values, int uniqueColumnIndex,SQLiteDatabase db) {
+    public void runInsertQuery(String table,String[] columns,String[] values, int uniqueColumnIndex, SQLiteDatabase db) {
         Log.d(TAG, "About to run insert query on "+table+" table");
         if(columns.length==values.length) {
             ContentValues cv=new ContentValues();

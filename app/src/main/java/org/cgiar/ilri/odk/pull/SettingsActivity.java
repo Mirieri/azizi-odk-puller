@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 
 import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
@@ -185,7 +186,7 @@ public class SettingsActivity extends PreferenceActivity
     public boolean onPreferenceClick(Preference preference) {
         if(preference == prefPullNow){
             //start the external data pulling service
-            Toast.makeText(this, getString(R.string.fetching_csv_for_)+" "+prefForm.getValue(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.fetching_data_for_)+" "+prefForm.getValue(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent(SettingsActivity.this, FetchFormCSVService.class);
             intent.putExtra(FetchFormCSVService.KEY_FORM_NAME, prefForm.getValue());
 
@@ -236,7 +237,7 @@ public class SettingsActivity extends PreferenceActivity
      * Make sure you overlay over the interface while doInBackground runs. You don't
      *  want the user trying to select a form when there is none
      */
-    private class FetchFormsThread extends AsyncTask<Integer, Integer, String> {
+    private class FetchFormsThread extends AsyncTask<Integer, Integer, List<Form>> {
 
         private ProgressDialog progressDialog;
 
@@ -257,9 +258,9 @@ public class SettingsActivity extends PreferenceActivity
          * @return String from the server, probably going to be json string
          */
         @Override
-        protected String doInBackground(Integer... integers) {
+        protected List<Form> doInBackground(Integer... integers) {
 
-            String requestResult = DataHandler.sendDataToServer(SettingsActivity.this, "", DataHandler.URI_FETCH_FORMS);
+            List<Form> requestResult = DataHandler.getAllForms(SettingsActivity.this);
             return requestResult;
         }
 
@@ -269,33 +270,22 @@ public class SettingsActivity extends PreferenceActivity
          * @param result Data from the server, probably going to be json
          */
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(List<Form> result) {
             super.onPostExecute(result);
 
             progressDialog.dismiss();
 
             if(result != null) {
-                Log.d(TAG, result);
-                try {
-                    //populate the list of forms
-                    JSONObject resJsonObject = new JSONObject(result);
-                    JSONArray jsonArray = resJsonObject.getJSONArray(DataHandler.DATA_FORM_LIST);
-
-                    String[] formNames =  new String[jsonArray.length()];
-                    for(int formIndex = 0; formIndex < jsonArray.length(); formIndex++){
-                        formNames[formIndex] = jsonArray.getString(formIndex);
-                    }
-
-                    prefForm.setEntries(formNames);
-                    prefForm.setEntryValues(formNames);
+                String[] formNames =  new String[result.size()];
+                for(int formIndex = 0; formIndex < result.size(); formIndex++){
+                    formNames[formIndex] = result.get(formIndex).getName();
                 }
-                catch (JSONException e) {
-                    Log.e(TAG, "Was unable to convert string from server into json object");
-                    e.printStackTrace();
-                }
+
+                prefForm.setEntries(formNames);
+                prefForm.setEntryValues(formNames);
             }
             else {
-                Toast.makeText(SettingsActivity.this, "Nope", Toast.LENGTH_LONG).show();
+                Toast.makeText(SettingsActivity.this, "No ", Toast.LENGTH_LONG).show();
                 Log.w(TAG, "DataHandler returned null. Something we");
             }
         }

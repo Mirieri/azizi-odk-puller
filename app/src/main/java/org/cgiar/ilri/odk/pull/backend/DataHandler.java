@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,6 +16,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -26,6 +28,9 @@ import java.util.List;
 import org.cgiar.ilri.odk.pull.R;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 import org.cgiar.ilri.odk.pull.backend.storage.DatabaseHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by j.rogena@cgiar.org on 09/07/14.
@@ -35,11 +40,11 @@ public class DataHandler {
     private static final int HTTP_POST_TIMEOUT = 20000;
     private static final int HTTP_RESPONSE_TIMEOUT = 20000;
 
-    private static final String BASE_URL = "http://azizi.ilri.cgiar.org/repository/modules/mod_item_set_proc.php";
-    public static final String URI_FETCH_FORMS = "?req=get_list";
-    public static final String URI_FETCH_CSV = "?req=get_csv&form=";
+    private static final String BASE_URL = "http://azizi.ilri.cgiar.org/repository/mod_ajax.php?page=odk_puller";
+    public static final String URI_FETCH_FORMS = "?do=get_list";
+    public static final String URI_FETCH_FORM_DATA = "?do=get_data&complete=1&form=";
+    public static final String URI_FETCH_FORM_FILE_NAMES = "?do=get_data&complete=0&form=";
     public static final String DATA_FORM_LIST = "forms";
-    public static final String DATA_CSV = "csv";
     public static final String DATA_CSV_LENGTH = "csv_length";
 
     public static final String PREF_ODK_ALREADY_ON = "odkAlreadyLaunched";
@@ -297,6 +302,54 @@ public class DataHandler {
             Log.e(TAG, "Was unable to open a readable database to read form preferences");
         }
 
+        return allForms;
+    }
+
+    public static List<String> getAllFormsOnServer(Context context) {
+        List<String> serverForms = new ArrayList<String>();
+        String result = sendDataToServer(context, "", DataHandler.URI_FETCH_FORMS);
+        if(result != null) {
+            Log.d(TAG, result);
+            try {
+                //populate the list of forms
+                JSONObject resJsonObject = new JSONObject(result);
+                JSONArray jsonArray = resJsonObject.getJSONArray(DataHandler.DATA_FORM_LIST);
+
+                for(int formIndex = 0; formIndex < jsonArray.length(); formIndex++){
+                    serverForms.add(jsonArray.getString(formIndex));
+                }
+            }
+            catch (JSONException e) {
+                Log.e(TAG, "Was unable to convert string from server into json object");
+                e.printStackTrace();
+            }
+        }
+        else {
+            Log.w(TAG, "DataHandler returned null. Something we");
+        }
+        return serverForms;
+    }
+
+    /**
+     * This function returns a list of all ODK forms that have been downloaded on the device regardless
+     * of whether they have pull data or not
+     *
+     * @return
+     */
+    public static List<String> getAllODKForms() {
+        List<String> allForms = new ArrayList<String>();
+        File baseODKDir = new File(Form.BASE_ODK_LOCATION);
+        File[] fileList = baseODKDir.listFiles();
+        for(File currFile : fileList){
+            if(currFile.isFile()){
+                //check if file is an xml file
+                String name = currFile.getName();
+                if(name.endsWith(".xml")){
+                    //assuming that the file only has a .xml at the end
+                    allForms.add(name.replace(".xml",""));
+                }
+            }
+        }
         return allForms;
     }
 

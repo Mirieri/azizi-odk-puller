@@ -13,16 +13,30 @@ public class Form {
 
     private static final String TAG = "Form";
 
-    private static final String PULL_DONT = "dnt";
-    private static final String PULL_5_MIN = "5_min";
-    private static final String PULL_15_MIN = "15_min";
-    private static final String PULL_30_MIN = "30_min";
-    private static final String PULL_1_HR = "1_hr";
-    private static final String PULL_24_HR = "24_hr";
+    public static final String PULL_DONT = "dnt";
+    public static final String PULL_5_MIN = "5_min";
+    public static final String PULL_15_MIN = "15_min";
+    public static final String PULL_30_MIN = "30_min";
+    public static final String PULL_1_HR = "1_hr";
+    public static final String PULL_24_HR = "24_hr";
 
     public static final String BASE_ODK_LOCATION = Environment.getExternalStorageDirectory() + "/odk/forms/";
     public static final String EXTERNAL_ITEM_SET_SUFFIX = "-media";
-    public static final String CSV_FILE_NAME = "itemsets.csv";
+    public static final String DEFAULT_CSV_FILE_NAME = "itemsets";
+    public static final String SUFFIX_CSV = ".csv";
+    public static final String SUFFIX_IMPORTED = ".imported";
+    public static final String SUFFIX_JOURNAL = "-journal";
+    public static final String SUFFIX_DB = ".db";
+    public static final String DB_DATA_TABLE = "externalData";
+    public static final String DB_DATA_COLUMN_PREFIX = "c_";
+    public static final String DB_DATA_SORT_FIELD = "c_sortby";
+    public static final String SUFFIX_INDEX_FIELD = "_key";
+    public static final String DB_DATA_COLUMN_TYPE = "text collate nocase";
+    public static final String DB_DATA_SORT_COLUMN_TYPE = "real";
+    public static final String DB_METADATA_TABLE = "android_metadata";
+    public static final String DB_META_LOCALE_FIELD = "local";
+    public static final String DB_META_LOCALE_FIELD_TYPE = "text";
+    public static final String SUFFIX_INDEX = "_idx";
 
     private String name;
     private String pullFrequency;
