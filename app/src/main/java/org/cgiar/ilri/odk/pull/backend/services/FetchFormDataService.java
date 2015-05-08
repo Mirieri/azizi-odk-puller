@@ -35,7 +35,7 @@ import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 
 /**
- * Created by Jason Rogena j.rogena@cgiar.org on 09/07/14.
+ * Created by Jason Rogena j.rogena@cgiar.org on 09th July 2014.
  * This class fetches the external data sets for the form
  */
 public class FetchFormDataService extends IntentService {
@@ -124,6 +124,7 @@ public class FetchFormDataService extends IntentService {
                                 }
                             }
                         }
+                        DataHandler.updateFormLastUpdateTime(FetchFormDataService.this, formName);
                         updateNotification(formName, getString(R.string.fetched_data), getString(R.string.the_following_files_were_added) + fetchedFilesString);
                     }
                     catch (JSONException e) {
@@ -143,6 +144,15 @@ public class FetchFormDataService extends IntentService {
         }
     }
 
+    /**
+     * Creates a CSV string corresponding to the provided JSONArray. Indexes in JSONArray expected
+     * to correspond to rows in the CSV string. Each JSONArray element should be a JSONObject with
+     * children being column values (with keys being column names). Make sure all JSONObjects in the
+     * JSONArray have the same number of key-value pairs.
+     *
+     * @param jsonArray JSONArray with the data
+     * @return  The CSV string or NULL if the JSONArray is empty or if an error occurs
+     */
     private String getCSVString(JSONArray jsonArray) {
         String csv = null;
         if(jsonArray.length() > 0) {
@@ -184,6 +194,18 @@ public class FetchFormDataService extends IntentService {
         return csv;
     }
 
+    /**
+     * Dumps data provided the rows variable into the specified database. The location of the database
+     * is in the form's media folder in ODK's SDCard's folder.
+     *
+     * Indexes in {@param rows} are expected to correspond to rows in {@param org.cgiar.ilri.odk.pull.backend.carriers.Form.DB_DATA_TABLE} for {@param fileName}.
+     * Each JSONArray element should be a JSONObject with children being column values (with keys being column names).
+     * Make sure all JSONObjects in the JSONArray have the same number of key-value pairs.
+     *
+     * @param fileName  Then name to be given to the Database (without the .db suffix)
+     * @param rows      The {@link org.json.JSONArray} object containing the data
+     * @return  TRUE if database created successfully
+     */
     private boolean saveDataInDb(String fileName, JSONArray rows) {
         boolean result = false;
         //TODO: only do this if ODK Collect is not using this file
@@ -294,9 +316,12 @@ public class FetchFormDataService extends IntentService {
     }
 
     /**
-     * This method saves the CSV item set for the form that is currently being handled
+     * This method saves the CSV item set for the form that is currently being handled. File is saved
+     * in the form's media directory in ODK's SDCard's directory. Saving is in two
      *
-     * @param csv The CSV String to be saved
+     * @param fileName  The name to be given to the CSV file. Make sure the name also contains the
+     *                  suffix to be given to the file
+     * @param csv       The CSV String to be saved
      * @return True if the save was successful
      */
     private boolean saveCSVInFile(String fileName, String csv){
@@ -403,8 +428,6 @@ public class FetchFormDataService extends IntentService {
 
                             outputStreamWriter1.close();
                             outputStreamWriter2.close();
-
-                            DataHandler.updateFormLastUpdateTime(FetchFormDataService.this, formName);
 
                             return true;
                         }

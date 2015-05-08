@@ -23,7 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Jason Rogena j.rogena@cgiar.org on 11/07/14.
+ * Created by Jason Rogena j.rogena@cgiar.org on 11th July 2014.
  * This service deletes external item sets and data from the SQLite database for the specified form
  */
 public class DeleteFormDataService extends IntentService {

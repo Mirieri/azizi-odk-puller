@@ -14,7 +14,7 @@ import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 
 /**
- * Created by Jason Rogena j.rogena@cgiar.org on 11/07/14.
+ * Created by Jason Rogena j.rogena@cgiar.org on 11th July 2014.
  * This service is called whenever the network comes back on
  */
 public class NetworkOnService extends IntentService {

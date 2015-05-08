@@ -6,8 +6,8 @@ import android.util.Log;
 import java.util.Date;
 
 /**
- * Created by Jason Rogena j.rogena@cgiar.org on 09/07/14.
- * This is just a carrier class for fom data
+ * Created by Jason Rogena j.rogena@cgiar.org on 09th July 2014.
+ * This is just a carrier class for form data
  */
 public class Form {
 

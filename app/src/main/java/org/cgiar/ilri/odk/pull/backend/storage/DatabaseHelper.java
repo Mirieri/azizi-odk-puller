@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
     private boolean externalDb;
 
     /**
-     * Constructor for the DatabaseHelper class
+     * Default constructor for the DatabaseHelper class
      *
      * @param context   Context e.g activity/service requesting for the data
      */
@@ -35,6 +35,15 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
         externalDb = false;
     }
 
+    /**
+     * Constructor for the DatabaseHelper class. Use this constructor if you want to define a custom
+     * location for the database file.
+     *
+     * @param context   Context e.g activity/service requesting for the data
+     * @param dbName    The name to give the database. The .db extension is not mandatory
+     * @param version   The database version
+     * @param pathToDb  The directory to store the .db file
+     */
     public DatabaseHelper(Context context, String dbName, int version, String pathToDb){
         super(new DatabaseContext(context, pathToDb), dbName, null, version);
         Log.d(TAG, "Database version = "+DB_VERSION);

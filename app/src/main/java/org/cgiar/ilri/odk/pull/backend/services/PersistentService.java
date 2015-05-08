@@ -20,7 +20,7 @@ import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 
 /**
- * Created by Jason Rogena j.rogena@cgiar.org on 10/07/14.
+ * Created by Jason Rogena j.rogena@cgiar.org on 10th July 2014.
  * This service is meant to run every minute to determine which external data needs to be downloaded
  * The service should be launced using AlarmManager and should not be an infinitely running service.
  * Refer to:

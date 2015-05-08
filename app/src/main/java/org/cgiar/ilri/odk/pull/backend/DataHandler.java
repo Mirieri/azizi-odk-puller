@@ -51,7 +51,16 @@ public class DataHandler {
     public static final String ODK_ALREADY_LAUCHED = "yes";
     public static final String ODK_NOT_LAUCHED = "no";
 
-
+    /**
+     * Performs a HTTP/HTTPS request to the server
+     *
+     * @param context       Context e.g activity that is making request
+     * @param jsonString    The {@link org.json.JSONObject} or {@link org.json.JSONArray} string to
+     *                      be sent to the server
+     * @param appendedURL   The URI to be appended to the BASE_URL
+     *
+     * @return  String containing the response from the server or null if an error occurs
+     */
     public static String sendDataToServer(Context context, String jsonString, String appendedURL) {
         HttpParams httpParameters = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters, HTTP_POST_TIMEOUT);
@@ -89,6 +98,13 @@ public class DataHandler {
         return  null;
     }
 
+    /**
+     * Checks whether the server responds before the timeout.
+     *
+     * @param timeout   The timeout in milliseconds
+     *
+     * @return  TRUE if the server responds before the timeout
+     */
     private static boolean isConnectedToServer(int timeout) {
         try{
             URL myUrl = new URL("http://azizi.ilri.cgiar.org");
@@ -162,6 +178,14 @@ public class DataHandler {
         return stringBuilder.toString();
     }
 
+    /**
+     * Saves preferences for the specified {@link org.cgiar.ilri.odk.pull.backend.carriers.Form}
+     *
+     * @param context   Context e.g activity calling this method
+     * @param form      {@link org.cgiar.ilri.odk.pull.backend.carriers.Form} containing the preferences
+     *
+     * @return  TRUE if able to save the preferences
+     */
     public static boolean saveFormPreferences(Context context, Form form) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
@@ -212,6 +236,14 @@ public class DataHandler {
         return false;
     }
 
+    /**
+     * Gets data on the specified form from the local database
+     *
+     * @param context   Context e.g activity calling this method
+     * @param formName  The name of the form preferences are being gotten for
+     *
+     * @return  {@link org.cgiar.ilri.odk.pull.backend.carriers.Form} containing the form data
+     */
     public static Form getForm(Context context, String formName){
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase readableDB = databaseHelper.getReadableDatabase();
@@ -251,6 +283,14 @@ public class DataHandler {
         return null;
     }
 
+    /**
+     * Deletes data from the local database for the specified form
+     *
+     * @param context   Context e.g activity calling this method
+     * @param formName  The name of the form data is being deleted for
+     *
+     * @return  TRUE if data successfully deleted
+     */
     public static boolean deleteFormData(Context context, String formName){
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
@@ -266,6 +306,12 @@ public class DataHandler {
         return false;
     }
 
+    /**
+     * Updates timestamp indicating when the form was last updated to now
+     *
+     * @param context   Context e.g activity calling this method
+     * @param formName  The name of the form for which the timestamp is being updated
+     */
     public static void updateFormLastUpdateTime(Context context, String formName){
         Form form = getForm(context, formName);
         if(form != null){
@@ -278,6 +324,14 @@ public class DataHandler {
         }
     }
 
+    /**
+     * Gets a list of all the forms registered in the local database. If a form is registered, its data
+     * is being pulled from the server.
+     *
+     * @param context Context e.g activity calling this method
+     *
+     * @return  A {@link java.util.List} of {@link java.lang.String} with the form names register in the local database
+     */
     public static List<Form> getAllForms(Context context){
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase readableDB = databaseHelper.getReadableDatabase();
@@ -304,6 +358,14 @@ public class DataHandler {
         return allForms;
     }
 
+    /**
+     * Gets a list of all the forms registered in the server. If a form is registered, its data
+     * is can be pulled from the server.
+     *
+     * @param context Context e.g activity calling this method
+     *
+     * @return  A {@link java.util.List} of {@link java.lang.String} with the form names register on the server
+     */
     public static List<String> getAllFormsOnServer(Context context) {
         List<String> serverForms = new ArrayList<String>();
         String result = sendDataToServer(context, "", DataHandler.URI_FETCH_FORMS);
@@ -330,10 +392,11 @@ public class DataHandler {
     }
 
     /**
-     * This function returns a list of all ODK forms that have been downloaded on the device regardless
+     * Returns a list of all ODK forms that have been downloaded on the device regardless
      * of whether they have pull data or not
      *
-     * @return
+     * @return  A {@link java.util.List} of {@link java.lang.String} with all the forms in ODK's sdcard
+     *          directory
      */
     public static List<String> getAllODKForms() {
         List<String> allForms = new ArrayList<String>();
