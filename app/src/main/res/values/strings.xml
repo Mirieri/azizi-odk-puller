@@ -42,7 +42,8 @@
 
     <string name="fetching_forms_please_wait_">Fetching forms, please wait..</string>
     <string name="loading_please_wait_">Loading, please wait..</string>
-    <string name="fetching_data">Fetching external form data</string>
+    <string name="fetched_data">Fetched external form data</string>
+    <string name="the_following_files_were_added">The following files were added:</string>
     <string name="successful_saved_csv">Successfully saved external data</string>
     <string name="unable_save_csv">Unable to save external data</string>
     <string name="fetching_data_for_">Fetching external form data for</string>

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -58,10 +59,11 @@ public class FetchFormDataService extends IntentService {
      * This method updates/creates the notification for this service.
     * Note that the notification generated here is a compact notification
      *
-     * @param title The title for the notification
-     * @param details The details of the notification
+     * @param title         The title for the notification
+     * @param details       The details of the notification
+     * @param extraDetails  Extra details to be displayed when notification is expanded
      */
-    private void updateNotification(String title, String details){
+    private void updateNotification(String title, String details, String extraDetails){
         Intent intent = new Intent(this, SettingsActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder mBuilder =
@@ -69,10 +71,12 @@ public class FetchFormDataService extends IntentService {
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(title)
                         .setContentText(details)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(extraDetails))
                         .setContentIntent(pendingIntent)
-                        .setAutoCancel(true);
-
+                        .setAutoCancel(true);;
+        //the_following_files_were_deleted
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
@@ -87,7 +91,6 @@ public class FetchFormDataService extends IntentService {
         formName = intent.getStringExtra(KEY_FORM_NAME);
         if(formName != null){
             //fetch data on the form
-            updateNotification(formName, getString(R.string.fetching_data));
             try {
                 String jsonString = DataHandler.sendDataToServer(this, null, DataHandler.URI_FETCH_FORM_DATA + URLEncoder.encode(formName, "UTF-8"));
                 if(jsonString !=null){
@@ -95,6 +98,7 @@ public class FetchFormDataService extends IntentService {
                         JSONObject jsonObject = new JSONObject(jsonString);
                         JSONObject fileData = jsonObject.getJSONObject("files");
                         Iterator<String> keys = fileData.keys();
+                        String fetchedFilesString = "";
                         while(keys.hasNext()){
                             String currFileName = keys.next();
                             Log.d(TAG, "Processing "+currFileName);
@@ -103,6 +107,7 @@ public class FetchFormDataService extends IntentService {
                                 Log.d(TAG, "Treating "+currFileName+" like a itemset file");
                                 String csv = getCSVString(currFileData);
                                 saveCSVInFile(currFileName+Form.SUFFIX_CSV, csv);
+                                fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV;
                             }
                             else {
                                 Log.d(TAG, "Treating "+currFileName+" like an external data file");
@@ -110,12 +115,16 @@ public class FetchFormDataService extends IntentService {
                                 String csv = getCSVString(currFileData);
                                 if(dataDumped) {
                                     saveCSVInFile(currFileName+Form.SUFFIX_CSV+Form.SUFFIX_IMPORTED, csv);
+                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_DB;
+                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV + Form.SUFFIX_IMPORTED;
                                 }
                                 else {
                                     saveCSVInFile(currFileName+Form.SUFFIX_CSV, csv);
+                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV;
                                 }
                             }
                         }
+                        updateNotification(formName, getString(R.string.fetched_data), getString(R.string.the_following_files_were_added) + fetchedFilesString);
                     }
                     catch (JSONException e) {
                         e.printStackTrace();
@@ -182,8 +191,26 @@ public class FetchFormDataService extends IntentService {
         /*File existingDb = new File(pathToFile+File.separator+fileName+Form.SUFFIX_DB);
         existingDb.delete();*/
         final DatabaseHelper databaseHelper = new DatabaseHelper(this, fileName, 1, pathToFile);
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        if(rows.length() > 0) {
+        SQLiteDatabase db = null;
+        try{
+            db = databaseHelper.getWritableDatabase();
+        }
+        catch (SQLiteException e){//probably because the existing .db file is corrupt
+            e.printStackTrace();
+            Log.w(TAG, "Unable to open database in "+pathToFile + File.separator + fileName + Form.SUFFIX_DB + " most likely because the database is corrupt. Trying to recreate db file");
+            File existingDbFile = new File(pathToFile + File.separator + fileName + Form.SUFFIX_DB);
+            existingDbFile.delete();
+            File existingDbJournalFile = new File(pathToFile + File.separator + fileName + Form.SUFFIX_DB + Form.SUFFIX_JOURNAL);
+            existingDbJournalFile.delete();
+            try {
+                db = databaseHelper.getWritableDatabase();
+            }
+            catch (SQLiteException e1) {
+                Log.e(TAG, "Unable to recreate "+pathToFile + File.separator + fileName + Form.SUFFIX_DB + "  file");
+                e1.printStackTrace();
+            }
+        }
+        if(rows.length() > 0 && db != null) {
             try {
                 List<String> columns = new ArrayList<String>();
                 List<String> indexes = new ArrayList<String>();

@@ -107,7 +107,7 @@ public class DeleteFormDataService extends IntentService {
             DataHandler.deleteFormData(this, formName);
             String deletedFilesString = "";
             for(int i = 0; i < pulledFiles.size(); i++) {
-                deletedFilesString = "\n - " + pulledFiles.get(i);
+                deletedFilesString = deletedFilesString + "\n - " + pulledFiles.get(i);
             }
             updateNotification(formName, getString(R.string.deleted_external_data_for_form), getString(R.string.the_following_files_were_deleted) + deletedFilesString);
         }
