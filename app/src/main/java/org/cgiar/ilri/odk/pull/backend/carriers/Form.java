@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class Form {
 
-    private static final String TAG = "Form";
+    private static final String TAG = "ODKPuller.Form";
 
     public static final String PULL_DONT = "dnt";
     public static final String PULL_5_MIN = "5_min";
@@ -37,6 +37,7 @@ public class Form {
     public static final String DB_META_LOCALE_FIELD = "local";
     public static final String DB_META_LOCALE_FIELD_TYPE = "text";
     public static final String SUFFIX_INDEX = "_idx";
+    public static final String DB_DEFAULT_LOCALE = "en_GB";
 
     private String name;
     private String pullFrequency;

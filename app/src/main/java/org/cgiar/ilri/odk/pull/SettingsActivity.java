@@ -38,7 +38,7 @@ public class SettingsActivity extends PreferenceActivity
                               implements Preference.OnPreferenceChangeListener,
                                             Preference.OnPreferenceClickListener{
 
-    private static final String TAG = "SettingsActivity";
+    private static final String TAG = "ODKPuller.SettingsActivity";
 
     private ListPreference prefForm;
     private ListPreference prefPullFrequency;
@@ -247,7 +247,6 @@ public class SettingsActivity extends PreferenceActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
             progressDialog = ProgressDialog.show(SettingsActivity.this, "", SettingsActivity.this.getString(R.string.fetching_forms_please_wait_));
         }
 
@@ -259,7 +258,7 @@ public class SettingsActivity extends PreferenceActivity
          */
         @Override
         protected List<Form> doInBackground(Integer... integers) {
-
+            Log.d(TAG, "Fetching ODK Pull forms");
             List<Form> requestResult = DataHandler.getAllForms(SettingsActivity.this);
             return requestResult;
         }
@@ -272,9 +271,8 @@ public class SettingsActivity extends PreferenceActivity
         @Override
         protected void onPostExecute(List<Form> result) {
             super.onPostExecute(result);
-
+            Log.d(TAG, "Fetched "+String.valueOf(result.size())+" ODK Puller forms");
             progressDialog.dismiss();
-
             if(result != null) {
                 String[] formNames =  new String[result.size()];
                 for(int formIndex = 0; formIndex < result.size(); formIndex++){

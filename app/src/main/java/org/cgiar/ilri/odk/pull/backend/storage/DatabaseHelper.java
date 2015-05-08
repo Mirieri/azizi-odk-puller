@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
     public static final int DB_VERSION = 2;
     public static final String TABLE_FORM = "form";
 
-    private static final String TAG = "DatabaseHelper";
+    private static final String TAG = "ODKPuller.DatabaseHelper";
     private boolean externalDb;
 
     /**
@@ -48,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        if(externalDb != false){
+        if(externalDb == false){
             db.execSQL("CREATE TABLE " + TABLE_FORM + " (id INTEGER PRIMARY KEY, name TEXT, pref_pull_freq TEXT, pref_pull_internet_on INT, pref_pull_odk_launches INT, last_time_fetched TEXT);");
         }
     }
@@ -63,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Serializable{
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(externalDb != false){
+        if(externalDb == false){
             Log.w(TAG, "About to update the database. All data will be lost");
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_FORM);
             //recreate the database

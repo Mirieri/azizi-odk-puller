@@ -18,7 +18,7 @@ import org.cgiar.ilri.odk.pull.backend.carriers.Form;
  * This service is called whenever the network comes back on
  */
 public class NetworkOnService extends IntentService {
-    private static final String TAG = "NetworkOnService";
+    private static final String TAG = "ODKPuller.NetworkOnService";
 
     /**
      * Default constructor. Make sure this method is there otherwise Android will not be able to start the service

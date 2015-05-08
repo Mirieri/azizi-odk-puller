@@ -2,6 +2,7 @@ package org.cgiar.ilri.odk.pull.backend.services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cgiar.ilri.odk.pull.R;
+import org.cgiar.ilri.odk.pull.SettingsActivity;
 import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 import org.json.JSONArray;
@@ -26,7 +28,7 @@ import org.json.JSONObject;
  */
 public class DeleteFormDataService extends IntentService {
 
-    private static final String TAG = "DeleteFormDataService";
+    private static final String TAG = "ODKPuller.DeleteFormDataService";
     public static final String KEY_FORM_NAME = "formName";
     private static final int NOTIFICATION_ID = 8732;
 
@@ -102,9 +104,12 @@ public class DeleteFormDataService extends IntentService {
             else{
                 Log.w(TAG, adbFormDir.getPath() + " does not exist. Not deleting anything");
             }
-
             DataHandler.deleteFormData(this, formName);
-            updateNotification(formName, getString(R.string.deleted_external_data_for_form));
+            String deletedFilesString = "";
+            for(int i = 0; i < pulledFiles.size(); i++) {
+                deletedFilesString = "\n - " + pulledFiles.get(i);
+            }
+            updateNotification(formName, getString(R.string.deleted_external_data_for_form), getString(R.string.the_following_files_were_deleted) + deletedFilesString);
         }
         else{
             Log.w(TAG, "The provided form name is null");
@@ -117,15 +122,19 @@ public class DeleteFormDataService extends IntentService {
      * @param title
      * @param details
      */
-    private void updateNotification(String title, String details){
+    private void updateNotification(String title, String details, String extraDetails){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(title)
-                        .setContentText(details);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        .setContentText(details)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(extraDetails))
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);;
+        //the_following_files_were_deleted
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }

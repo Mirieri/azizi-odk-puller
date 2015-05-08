@@ -39,7 +39,7 @@ import org.cgiar.ilri.odk.pull.backend.carriers.Form;
  */
 public class FetchFormCSVService extends IntentService {
 
-    private static final String TAG = "FetchFormCSVService";
+    private static final String TAG = "ODKPuller.FetchFormCSVService";
     private static final int NOTIFICATION_ID = 322132;
 
     public static final String KEY_FORM_NAME = "formName";
@@ -192,6 +192,7 @@ public class FetchFormCSVService extends IntentService {
                 db.execSQL("drop table if exists "+Form.DB_METADATA_TABLE);
                 String createMetaTableString = "create table "+Form.DB_METADATA_TABLE + " ("+Form.DB_META_LOCALE_FIELD+" "+Form.DB_META_LOCALE_FIELD_TYPE+")";
                 db.execSQL(createMetaTableString);
+                databaseHelper.runInsertQuery(Form.DB_METADATA_TABLE, new String[]{Form.DB_META_LOCALE_FIELD}, new String[]{Form.DB_DEFAULT_LOCALE}, -1, db);
                 db.execSQL("drop table if exists "+Form.DB_DATA_TABLE);
                 String createTableString = "create table "+Form.DB_DATA_TABLE+" (";
                 while(iterator.hasNext()){
@@ -218,7 +219,7 @@ public class FetchFormCSVService extends IntentService {
                         String[] currColumns = new String[columns.size() + 1];
                         String[] currValues = new String[columns.size() + 1];
                         for(int columnIndex = 0; columnIndex < columns.size(); columnIndex++){
-                            currColumns[columnIndex] = columns.get(columnIndex);
+                            currColumns[columnIndex] = Form.DB_DATA_COLUMN_PREFIX+columns.get(columnIndex);
                             currValues[columnIndex] = currRow.getString(columns.get(columnIndex));
                         }
                         currColumns[columns.size()] = Form.DB_DATA_SORT_FIELD;

@@ -36,14 +36,14 @@ import org.json.JSONObject;
  * Created by j.rogena@cgiar.org on 09/07/14.
  */
 public class DataHandler {
-    private static final String TAG = "DataHandler";
+    private static final String TAG = "ODKPuller.DataHandler";
     private static final int HTTP_POST_TIMEOUT = 20000;
     private static final int HTTP_RESPONSE_TIMEOUT = 20000;
 
     private static final String BASE_URL = "http://azizi.ilri.cgiar.org/repository/mod_ajax.php?page=odk_puller";
-    public static final String URI_FETCH_FORMS = "?do=get_list";
-    public static final String URI_FETCH_FORM_DATA = "?do=get_data&complete=1&form=";
-    public static final String URI_FETCH_FORM_FILE_NAMES = "?do=get_data&complete=0&form=";
+    public static final String URI_FETCH_FORMS = "&do=get_list";
+    public static final String URI_FETCH_FORM_DATA = "&do=get_data&complete=1&form=";
+    public static final String URI_FETCH_FORM_FILE_NAMES = "&do=get_data&complete=0&form=";
     public static final String DATA_FORM_LIST = "forms";
     public static final String DATA_CSV_LENGTH = "csv_length";
 
@@ -282,7 +282,6 @@ public class DataHandler {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase readableDB = databaseHelper.getReadableDatabase();
         List<Form> allForms = new ArrayList<Form>();
-
         if(readableDB.isOpen()){
             //get all the form names
             String[] columns = new String[]{"name"};

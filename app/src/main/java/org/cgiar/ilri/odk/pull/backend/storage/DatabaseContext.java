@@ -2,6 +2,7 @@ package org.cgiar.ilri.odk.pull.backend.storage;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -14,7 +15,7 @@ import java.io.File;
  */
 class DatabaseContext extends ContextWrapper {
 
-    private static final String TAG = "DatabaseContext";
+    private static final String TAG = "ODKPuller.DatabaseContext";
     private final String directory;
     public DatabaseContext(Context context, String directory) {
         super(context);
@@ -35,10 +36,21 @@ class DatabaseContext extends ContextWrapper {
         return result;
     }
 
+    /**
+     *  This version is called for android devices < api-11
+     */
     @Override
     public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory) {
         SQLiteDatabase result = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), factory);
         // SQLiteDatabase result = super.openOrCreateDatabase(name, mode, factory);
         return result;
+    }
+
+    /**
+     *  This version is called for android devices >= api-11
+     */
+    @Override
+    public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory, DatabaseErrorHandler errorHandler) {
+        return openOrCreateDatabase(name,mode, factory);
     }
 }

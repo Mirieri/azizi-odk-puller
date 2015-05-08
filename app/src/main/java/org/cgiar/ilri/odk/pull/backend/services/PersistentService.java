@@ -29,7 +29,7 @@ import org.cgiar.ilri.odk.pull.backend.carriers.Form;
  */
 public class PersistentService extends IntentService {
 
-    private static final String TAG = "PersistentService";
+    private static final String TAG = "ODKPuller.PersistentService";
 
     public static final long RESTART_INTERVAL = 30000l;//30 seconds
     private static int NOTIFICATION_ID = 9232;
