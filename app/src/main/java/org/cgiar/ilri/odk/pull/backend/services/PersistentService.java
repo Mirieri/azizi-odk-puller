@@ -203,8 +203,8 @@ public class PersistentService extends IntentService {
      * @param form The form for which you want to get external item sets
      */
     public void startPullService(Form form){
-        Intent intent = new Intent(PersistentService.this, FetchFormCSVService.class);
-        intent.putExtra(FetchFormCSVService.KEY_FORM_NAME, form.getName());
+        Intent intent = new Intent(PersistentService.this, FetchFormDataService.class);
+        intent.putExtra(FetchFormDataService.KEY_FORM_NAME, form.getName());
 
         startService(intent);
     }

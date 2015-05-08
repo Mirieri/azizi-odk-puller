@@ -22,7 +22,7 @@
         </activity>
         
         <service
-            android:name="org.cgiar.ilri.odk.pull.backend.services.FetchFormCSVService"
+            android:name="org.cgiar.ilri.odk.pull.backend.services.FetchFormDataService"
             android:enabled="true">
         </service>
         <service

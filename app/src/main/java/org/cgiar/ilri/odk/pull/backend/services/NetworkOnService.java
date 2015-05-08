@@ -83,8 +83,8 @@ public class NetworkOnService extends IntentService {
      * @param form The form whose data is to be fetched
      */
     public void startPullService(Form form){
-        Intent intent = new Intent(NetworkOnService.this, FetchFormCSVService.class);
-        intent.putExtra(FetchFormCSVService.KEY_FORM_NAME, form.getName());
+        Intent intent = new Intent(NetworkOnService.this, FetchFormDataService.class);
+        intent.putExtra(FetchFormDataService.KEY_FORM_NAME, form.getName());
 
         startService(intent);
     }

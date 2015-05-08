@@ -37,9 +37,9 @@ import org.cgiar.ilri.odk.pull.backend.carriers.Form;
  * Created by Jason Rogena j.rogena@cgiar.org on 09/07/14.
  * This class fetches the external data sets for the form
  */
-public class FetchFormCSVService extends IntentService {
+public class FetchFormDataService extends IntentService {
 
-    private static final String TAG = "ODKPuller.FetchFormCSVService";
+    private static final String TAG = "ODKPuller.FetchFormDataService";
     private static final int NOTIFICATION_ID = 322132;
 
     public static final String KEY_FORM_NAME = "formName";
@@ -50,7 +50,7 @@ public class FetchFormCSVService extends IntentService {
      * Default constructor for the class. Make sure this is there or else Android will be unable to
      *  call this service
      */
-    public FetchFormCSVService() {
+    public FetchFormDataService() {
         super(TAG);
     }
 
@@ -377,7 +377,7 @@ public class FetchFormCSVService extends IntentService {
                             outputStreamWriter1.close();
                             outputStreamWriter2.close();
 
-                            DataHandler.updateFormLastUpdateTime(FetchFormCSVService.this, formName);
+                            DataHandler.updateFormLastUpdateTime(FetchFormDataService.this, formName);
 
                             return true;
                         }

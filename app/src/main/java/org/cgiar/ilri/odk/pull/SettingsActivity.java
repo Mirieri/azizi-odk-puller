@@ -17,18 +17,14 @@ import android.preference.PreferenceCategory;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Date;
 import java.util.List;
 
 import org.cgiar.ilri.odk.pull.backend.DataHandler;
 import org.cgiar.ilri.odk.pull.backend.carriers.Form;
 import org.cgiar.ilri.odk.pull.backend.services.DeleteFormDataService;
-import org.cgiar.ilri.odk.pull.backend.services.FetchFormCSVService;
 import org.cgiar.ilri.odk.pull.backend.services.PersistentService;
+import org.cgiar.ilri.odk.pull.backend.services.FetchFormDataService;
 
 /**
  * Created by Jason Rogena j.rogena@cgiar.org
@@ -187,8 +183,8 @@ public class SettingsActivity extends PreferenceActivity
         if(preference == prefPullNow){
             //start the external data pulling service
             Toast.makeText(this, getString(R.string.fetching_data_for_)+" "+prefForm.getValue(), Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(SettingsActivity.this, FetchFormCSVService.class);
-            intent.putExtra(FetchFormCSVService.KEY_FORM_NAME, prefForm.getValue());
+            Intent intent = new Intent(SettingsActivity.this, FetchFormDataService.class);
+            intent.putExtra(FetchFormDataService.KEY_FORM_NAME, prefForm.getValue());
 
             startService(intent);
         }
