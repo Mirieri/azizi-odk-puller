@@ -1,20 +1,18 @@
-# Azizi ODK Pull
-This application can be used to fetch external item sets for ODK Collect forms. 
-Refer to [ODK External Itemsets page](http://opendatakit.org/help/form-design/external-itemsets/)
-for more information.
+# Azizi ODK Puller
 
-Note that this application has been custom made by and for use by the ILRI Azizi Bio-Repository team
-and does not follow any standards at all ;).
-Server side code used by this application is in another repository. You can however reverse engineer this app or simply contact [me](www.google.com/+jasonrogena) if you feel
-like you have to use this App.
+This application can be used to periodically fetch external data to be used by [ODK Collect](https://opendatakit.org/use/collect/) and possibly any other ODK application running on Android.
+Refer to the [ODK External Itemsets page](https://opendatakit.org/help/form-design/external-itemsets/) and [ODK Data Preloading page](https://opendatakit.org/help/form-design/data-preloading/) for more information.
+
+Note that this application has been custom made by and for use by the ILRI Azizi Biorepository team and has been tested for this purpose only.
+Server side code used by this application is under [another GitHub repository](https://github.com/ilri/azizi-biorepository/).
 
 ## Building the project
- 1. Create the local.properties file in the project's root directory and specify Android SDK location there like this: 
-    
-   sdk.dir=/android/SDK/location
 
- 2. Run the following command(s) in the project's root directory to build the project:
+To buid this [Gradle](https://gradle.org/) project, run the following commands:
 
-    ./gradlew build 
+    ./gradlew clean
+    ./gradlew build --debug
 
- 3. You can also import the Project as a local Android Studios project on your machine
+## License
+
+This code is released under the [GNU General Public License v3](http://www.gnu.org/licenses/agpl-3.0.html). Please read LICENSE.txt for more details.
