@@ -1,6 +1,5 @@
-# Azizi ODK Puller
+# Azizi ODK Puller [![Build Status](https://travis-ci.org/ilri/azizi-odk-puller.svg?branch=master)](https://travis-ci.org/ilri/azizi-odk-puller)
 
-[![Build Status](https://travis-ci.org/ilri/azizi-odk-puller.svg?branch=master)](https://travis-ci.org/ilri/azizi-odk-puller)
 This application can be used to periodically fetch external data to be used by [ODK Collect](https://opendatakit.org/use/collect/) and possibly any other ODK application running on Android.
 Refer to the [ODK External Itemsets page](https://opendatakit.org/help/form-design/external-itemsets/) and [ODK Data Preloading page](https://opendatakit.org/help/form-design/data-preloading/) for more information.
 
