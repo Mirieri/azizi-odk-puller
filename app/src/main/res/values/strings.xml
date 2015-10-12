@@ -63,6 +63,7 @@
     <string name="the_following_files_were_added">The following files were added:</string>
     <string name="successful_saved_csv">Successfully saved external data</string>
     <string name="unable_save_csv">Unable to save external data</string>
+    <string name="unable_fetch_data_for">Unable to fetch data for</string>
     <string name="fetching_data_for_">Fetching external form data for</string>
     <string name="determining_data_for_pulling">Determining which data sets to pull</string>
     <string name="warning">Warning</string>

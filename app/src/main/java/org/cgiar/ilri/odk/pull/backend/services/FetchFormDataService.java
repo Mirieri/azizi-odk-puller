@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.cgiar.ilri.odk.pull.SettingsActivity;
 import org.cgiar.ilri.odk.pull.backend.storage.DatabaseHelper;
@@ -122,27 +123,43 @@ public class FetchFormDataService extends IntentService {
                             JSONArray currFileData = fileData.getJSONArray(currFileName);
                             if(currFileName.equals(Form.DEFAULT_CSV_FILE_NAME)){
                                 Log.d(TAG, "Treating "+currFileName+" like a itemset file");
+                                Log.d(TAG, currFileName+" data = "+currFileData.toString());
                                 String csv = getCSVString(currFileData);
-                                saveCSVInFile(currFileName+Form.SUFFIX_CSV, csv);
-                                fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV;
+                                if(csv != null) {
+                                    saveCSVInFile(currFileName+Form.SUFFIX_CSV, csv);
+                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV;
+                                }
+                                else {
+                                    Log.w(TAG, Form.DEFAULT_CSV_FILE_NAME+" from the server is null. Unable to save this on the device");
+                                    Toast.makeText(FetchFormDataService.this, getResources().getText(R.string.unable_fetch_data_for) + " " + currFileName, Toast.LENGTH_LONG).show();
+
+                                }
                             }
                             else {
                                 Log.d(TAG, "Treating "+currFileName+" like an external data file");
                                 boolean dataDumped = saveDataInDb(currFileName, currFileData);
                                 String csv = getCSVString(currFileData);
-                                if(dataDumped) {
-                                    saveCSVInFile(currFileName+Form.SUFFIX_CSV+Form.SUFFIX_IMPORTED, csv);
-                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_DB;
-                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV + Form.SUFFIX_IMPORTED;
+                                if(csv != null) {
+                                    if(dataDumped) {
+                                        saveCSVInFile(currFileName+Form.SUFFIX_CSV+Form.SUFFIX_IMPORTED, csv);
+                                        fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_DB;
+                                        fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV + Form.SUFFIX_IMPORTED;
+                                    }
+                                    else {
+                                        saveCSVInFile(currFileName+Form.SUFFIX_CSV, csv);
+                                        fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV;
+                                    }
                                 }
                                 else {
-                                    saveCSVInFile(currFileName+Form.SUFFIX_CSV, csv);
-                                    fetchedFilesString = fetchedFilesString + "\n" + " - " + currFileName+Form.SUFFIX_CSV;
+                                    Log.w(TAG, currFileName+" from the server is null. Unable to save this on the device");
+                                    Toast.makeText(FetchFormDataService.this, getResources().getText(R.string.unable_fetch_data_for) + " " + currFileName, Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
                         DataHandler.updateFormLastUpdateTime(FetchFormDataService.this, formName);
-                        updateNotification(formName, getString(R.string.fetched_data), getString(R.string.the_following_files_were_added) + fetchedFilesString);
+                        if(fetchedFilesString.length() > 0) {//only show the notification if at least one file updated
+                            updateNotification(formName, getString(R.string.fetched_data), getString(R.string.the_following_files_were_added) + fetchedFilesString);
+                        }
                     }
                     catch (JSONException e) {
                         e.printStackTrace();
@@ -342,7 +359,7 @@ public class FetchFormDataService extends IntentService {
      * @return True if the save was successful
      */
     private boolean saveCSVInFile(String fileName, String csv){
-
+        Log.d(TAG, "CSV string = "+csv);
         File directory = new File(Form.BASE_ODK_LOCATION);
         boolean dirCreated = false;
         if(!directory.exists() || !directory.isDirectory()){//means that the base directory does not exist
@@ -437,8 +454,8 @@ public class FetchFormDataService extends IntentService {
                             adbCSVFile.setWritable(true);
 
                             //OutputStreamWriter outputStreamWriter1 = new OutputStreamWriter(openFileOutput(fileName, Context.MODE_PRIVATE));
-                            OutputStreamWriter outputStreamWriter1 = new OutputStreamWriter(new FileOutputStream(csvFile));
-                            OutputStreamWriter outputStreamWriter2 = new OutputStreamWriter(new FileOutputStream(adbCSVFile));
+                            OutputStreamWriter outputStreamWriter1 = new OutputStreamWriter(new FileOutputStream(csvFile, false));
+                            OutputStreamWriter outputStreamWriter2 = new OutputStreamWriter(new FileOutputStream(adbCSVFile, false));
 
                             outputStreamWriter1.write(csv);
                             outputStreamWriter2.write(csv);
