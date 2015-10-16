@@ -1,10 +1,7 @@
 ## Azizi ODK Puller [![Build Status](https://travis-ci.org/ilri/azizi-odk-puller.svg?branch=master)](https://travis-ci.org/ilri/azizi-odk-puller)
 
 This application can be used to periodically fetch external data to be used by [ODK Collect](https://opendatakit.org/use/collect/) and possibly any other ODK application running on Android.
-Refer to the [ODK External Itemsets page](https://opendatakit.org/help/form-design/external-itemsets/) and [ODK Data Preloading page](https://opendatakit.org/help/form-design/data-preloading/) for more information.
-
-Note that this application has been custom made by and for use by the ILRI Azizi Biorepository team and has been tested for this purpose only.
-Server side code used by this application is under [another GitHub repository](https://github.com/ilri/azizi-biorepository/).
+It works with both [ODK external itemsets](https://opendatakit.org/help/form-design/external-itemsets/) and [ODK external data](https://opendatakit.org/help/form-design/data-preloading/). Note that this application has been custom made by and for use by the ILRI Azizi Biorepository team and has been tested for this purpose only. Server side code used by this application is under [another GitHub repository](https://github.com/ilri/azizi-biorepository/). Download the [sample](https://raw.githubusercontent.com/ilri/azizi-odk-puller/master/sample_odk_pull_form.zip) ODK XLS Form that illustrates how to use ODK Puller.
 
 ### Building the project
 
